@@ -2,7 +2,8 @@ import { api } from "@/app/api/api";
 import { Note } from "../../types/note";
 import { User } from "../../types/user";
 
-// Note functions
+// --- Note functions ---
+
 export const fetchNotes = async (
   page = 1,
   perPage = 12,
@@ -35,8 +36,13 @@ export const deleteNote = async (id: string): Promise<Note> => {
   return data;
 };
 
-// Auth functions
-// Оновлено: тепер приймає об'єкт { email, password }
+// --- Auth functions ---
+
+/**
+ * Реєстрація користувача.
+ * Приймає об'єкт з email та password.
+ * username видалено, оскільки бекенд GoIT зазвичай його не потребує при реєстрації.
+ */
 export const register = async (credentials: {
   email: string;
   password: string;
@@ -45,7 +51,10 @@ export const register = async (credentials: {
   return data;
 };
 
-// Оновлено: тепер приймає об'єкт { email, password }
+/**
+ * Логін користувача.
+ * Приймає об'єкт { email, password }.
+ */
 export const login = async (credentials: {
   email: string;
   password: string;

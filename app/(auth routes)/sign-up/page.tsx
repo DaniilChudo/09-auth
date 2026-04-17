@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { register } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 import css from "./SignUpPage.module.css";
+import axios from "axios";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("");
@@ -18,12 +19,15 @@ export default function SignUpPage() {
     setError("");
 
     try {
-      // Відправляємо об'єктом, як того тепер чекає функція в clientApi
       const user = await register({ email, password });
       setUser(user);
       router.push("/profile");
-    } catch (err) {
-      setError("Registration failed. Please try again.");
+    } catch (err: any) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        setError("Користувач з такою поштою вже існує (409).");
+      } else {
+        setError("Registration failed. Please try again.");
+      }
     }
   };
 
@@ -36,33 +40,28 @@ export default function SignUpPage() {
           <input
             id="email"
             type="email"
-            name="email"
             className={css.input}
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-
         <div className={css.formGroup}>
           <label htmlFor="password">Password</label>
           <input
             id="password"
             type="password"
-            name="password"
             className={css.input}
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-
         <div className={css.actions}>
           <button type="submit" className={css.submitButton}>
             Register
           </button>
         </div>
-
         {error && <p className={css.error}>{error}</p>}
       </form>
     </main>
