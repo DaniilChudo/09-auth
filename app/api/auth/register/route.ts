@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import api from "@/app/api/api";
+import { api } from "../../api";
 import { cookies } from "next/headers";
 import { parse } from "cookie";
 import { isAxiosError } from "axios";
@@ -11,10 +11,7 @@ const logError = (data: any) => {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const apiRes = await api.post(
-      "https://notehub-api.goit.study/users/signup",
-      body,
-    );
+    const apiRes = await api.post("users/signup", body);
 
     const cookieStore = await cookies();
     const setCookie = apiRes.headers["set-cookie"];
@@ -24,32 +21,19 @@ export async function POST(req: NextRequest) {
 
       for (const cookieStr of cookieArray) {
         const parsed = parse(cookieStr);
+        const options = {
+          expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
+          path: parsed.Path || "/",
+          maxAge: parsed["Max-Age"] ? Number(parsed["Max-Age"]) : undefined,
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax" as const,
+        };
 
-        const cookieNames = Object.keys(parsed).filter(
-          (key) =>
-            ![
-              "Expires",
-              "Path",
-              "Max-Age",
-              "HttpOnly",
-              "Secure",
-              "SameSite",
-            ].includes(key),
-        );
-
-        for (const name of cookieNames) {
-          const value = parsed[name];
-          if (value !== undefined) {
-            cookieStore.set(name, value, {
-              expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
-              path: parsed.Path || "/",
-              maxAge: parsed["Max-Age"] ? Number(parsed["Max-Age"]) : undefined,
-              httpOnly: true,
-              secure: process.env.NODE_ENV === "production",
-              sameSite: "lax",
-            });
-          }
-        }
+        if (parsed.accessToken)
+          cookieStore.set("accessToken", parsed.accessToken, options);
+        if (parsed.refreshToken)
+          cookieStore.set("refreshToken", parsed.refreshToken, options);
       }
     }
 
