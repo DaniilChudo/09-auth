@@ -18,7 +18,8 @@ export default function SignInPage() {
     setError("");
 
     try {
-      const user = await login(email, password);
+      // Відправляємо об'єктом
+      const user = await login({ email, password });
       setUser(user);
       router.push("/profile");
     } catch (err) {

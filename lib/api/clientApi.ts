@@ -36,24 +36,21 @@ export const deleteNote = async (id: string): Promise<Note> => {
 };
 
 // Auth functions
-export const register = async (
-  username: string,
-  email: string,
-  password: string,
-): Promise<User> => {
-  const { data } = await api.post<User>("/auth/register", {
-    username,
-    email,
-    password,
-  });
+// Оновлено: тепер приймає об'єкт { email, password }
+export const register = async (credentials: {
+  email: string;
+  password: string;
+}): Promise<User> => {
+  const { data } = await api.post<User>("/auth/register", credentials);
   return data;
 };
 
-export const login = async (email: string, password: string): Promise<User> => {
-  const { data } = await api.post<User>("/auth/login", {
-    email,
-    password,
-  });
+// Оновлено: тепер приймає об'єкт { email, password }
+export const login = async (credentials: {
+  email: string;
+  password: string;
+}): Promise<User> => {
+  const { data } = await api.post<User>("/auth/login", credentials);
   return data;
 };
 

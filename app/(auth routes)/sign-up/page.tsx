@@ -18,10 +18,8 @@ export default function SignUpPage() {
     setError("");
 
     try {
-      // For registration, the backend might expect a username. 
-      // Using email prefix as a fallback username since we removed the name field.
-      const username = email.split("@")[0];
-      const user = await register(username, email, password);
+      // Відправляємо об'єктом, як того тепер чекає функція в clientApi
+      const user = await register({ email, password });
       setUser(user);
       router.push("/profile");
     } catch (err) {
