@@ -13,6 +13,9 @@ export default function SignInPage() {
   const router = useRouter();
   const { setUser } = useAuthStore();
 
+  // Diagnostic: Check if environment variable is available
+  console.log("Current API URL:", process.env.NEXT_PUBLIC_API_URL);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
