@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { checkSession } from "./lib/api/serverApi";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -14,25 +13,24 @@ export function proxy(request: NextRequest) {
     pathname.startsWith(route),
   );
 
-  // Get cookies from the request
-  const cookieHeader = request.headers.get("cookie") || "";
+  // Get tokens from cookies
+  const accessToken = request.cookies.get("accessToken")?.value;
+  const refreshToken = request.cookies.get("refreshToken")?.value;
+  const isAuthenticated = !!(accessToken || refreshToken);
 
-  // For now, skip session checking to avoid server-side issues during development
-  // In production, you would uncomment the session checking logic
-
-  // If user is trying to access private routes, redirect to sign-in
-  if (isPrivateRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/sign-in";
-    return NextResponse.redirect(url);
+  // If user is authenticated and tries to access auth routes, redirect to home
+  if (isAuthRoute && isAuthenticated) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // If user is trying to access auth routes and is already authenticated, redirect to profile
-  // This would require session checking in production
+  // If user is NOT authenticated and tries to access private routes, redirect to sign-in
+  if (isPrivateRoute && !isAuthenticated) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
+  }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/profile/:path*", "/notes/:path*", "/sign-in", "/sign-up"],
 };

@@ -1,4 +1,4 @@
-import api from "@/app/api/api";
+import { api } from "@/app/api/api";
 import { Note } from "../../types/note";
 import { User } from "../../types/user";
 
@@ -37,12 +37,12 @@ export const deleteNote = async (id: string): Promise<Note> => {
 
 // Auth functions
 export const register = async (
-  name: string,
+  username: string,
   email: string,
   password: string,
 ): Promise<User> => {
   const { data } = await api.post<User>("/auth/register", {
-    name,
+    username,
     email,
     password,
   });
@@ -75,7 +75,9 @@ export const getMe = async (): Promise<User> => {
   return data;
 };
 
-export const updateMe = async (userData: Partial<User>): Promise<User> => {
+export const updateMe = async (userData: {
+  username: string;
+}): Promise<User> => {
   const { data } = await api.patch<User>("/users/me", userData);
   return data;
 };
