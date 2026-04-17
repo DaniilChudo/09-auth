@@ -1,7 +1,7 @@
 "use client";
 
-import { useAuthStore } from "../../lib/store/authStore";
-import { logout } from "../../lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
+import { logout } from "@/lib/api/clientApi";
 import css from "./AuthNavigation.module.css";
 
 export default function AuthNavigation() {
