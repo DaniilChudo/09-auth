@@ -37,10 +37,12 @@ export const deleteNote = async (id: string): Promise<Note> => {
 
 // Auth functions
 export const register = async (
+  name: string,
   email: string,
   password: string,
 ): Promise<User> => {
   const { data } = await api.post<User>("/api/auth/register", {
+    name,
     email,
     password,
   });
