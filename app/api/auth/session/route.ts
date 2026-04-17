@@ -1,31 +1,19 @@
-import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { api } from "../../api";
-import { parse } from "cookie";
-import { isAxiosError } from "axios";
-import { logErrorResponse } from "../../_utils/utils";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
+    const cookieStore = await cookies(); // Додаємо await
     const accessToken = cookieStore.get("accessToken")?.value;
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
-    if (accessToken) {
-      return NextResponse.json({ success: true });
-    }
-
-    if (refreshToken) {
-      // Return success without recursive API call to avoid infinite loop
+    // Якщо є будь-який токен, повертаємо успіх (без рекурсії!)
+    if (accessToken || refreshToken) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
-    return NextResponse.json({ success: false }, { status: 200 });
+
+    return NextResponse.json({ success: false }, { status: 401 });
   } catch (error) {
-    if (isAxiosError(error)) {
-      logErrorResponse(error.response?.data);
-      return NextResponse.json({ success: false }, { status: 200 });
-    }
-    logErrorResponse({ message: (error as Error).message });
-    return NextResponse.json({ success: false }, { status: 200 });
+    return NextResponse.json({ success: false }, { status: 500 });
   }
 }
