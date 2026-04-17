@@ -21,6 +21,8 @@ export async function proxy(request: NextRequest) {
   let accessToken = cookieStore.get("accessToken")?.value;
   const refreshToken = cookieStore.get("refreshToken")?.value;
 
+  let response = NextResponse.next();
+
   // Token Refresh Logic
   if (!accessToken && refreshToken) {
     const res = await checkSession();
@@ -31,11 +33,24 @@ export async function proxy(request: NextRequest) {
         const parsed = parse(cookieStr);
         if (parsed.accessToken) {
           accessToken = parsed.accessToken;
-          cookieStore.set("accessToken", parsed.accessToken, {
+          const options = {
             expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
             path: parsed.Path,
             maxAge: parsed["Max-Age"] ? Number(parsed["Max-Age"]) : undefined,
-          });
+            httpOnly: true,
+          };
+          response.cookies.set("accessToken", parsed.accessToken, options);
+          cookieStore.set("accessToken", parsed.accessToken, options);
+        }
+        if (parsed.refreshToken) {
+          const options = {
+            expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
+            path: parsed.Path,
+            maxAge: parsed["Max-Age"] ? Number(parsed["Max-Age"]) : undefined,
+            httpOnly: true,
+          };
+          response.cookies.set("refreshToken", parsed.refreshToken, options);
+          cookieStore.set("refreshToken", parsed.refreshToken, options);
         }
       }
     }
@@ -53,7 +68,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

@@ -37,13 +37,10 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json(res.data, { status: res.status });
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     if (isAxiosError(error)) {
-      return NextResponse.json(
-        { error: error.message, response: error.response?.data },
-        { status: error.response?.status || 401 },
-      );
+      return NextResponse.json({ success: false }, { status: 401 });
     }
     return NextResponse.json({ success: false }, { status: 500 });
   }
