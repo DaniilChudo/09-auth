@@ -11,7 +11,10 @@ const logError = (data: any) => {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const apiRes = await api.post("/users/signup", body);
+    const apiRes = await api.post(
+      "https://notehub-api.goit.study/users/signup",
+      body,
+    );
 
     const cookieStore = await cookies();
     const setCookie = apiRes.headers["set-cookie"];

@@ -8,7 +8,10 @@ import { logErrorResponse } from "../../_utils/utils";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const apiRes = await api.post("auth/login", body);
+    const apiRes = await api.post(
+      "https://notehub-api.goit.study/auth/login",
+      body,
+    );
 
     const cookieStore = await cookies();
     const setCookie = apiRes.headers["set-cookie"];

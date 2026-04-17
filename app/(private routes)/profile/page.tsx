@@ -1,4 +1,4 @@
-import { useAuthStore } from "../../../../lib/store/authStore";
+import { useAuthStore } from "@/lib/store/authStore";
 import Image from "next/image";
 import css from "./ProfilePage.module.css";
 

@@ -1,9 +1,16 @@
 import axios from "axios";
 
-const api = axios.create({
-  // Залишаємо тільки корінь, бо "/api" вже є у твоїх запитах у коді
+// For internal Next.js API routes (app/api/*)
+export const internalApi = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL + "/api",
+  withCredentials: true,
+});
+
+// For external GoIT API calls
+export const externalApi = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
 });
 
-export default api;
+// Default export for backward compatibility
+export default internalApi;

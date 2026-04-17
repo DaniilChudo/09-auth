@@ -12,6 +12,30 @@ export async function GET() {
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
+    // If no tokens, check with external GoIT API
+    try {
+      const response = await fetch(
+        "https://notehub-api.goit.study/auth/session",
+        {
+          headers: {
+            Cookie: `accessToken=${accessToken}; refreshToken=${refreshToken}`,
+          },
+        },
+      );
+
+      if (response.ok) {
+        const userData = await response.json();
+        if (userData) {
+          return NextResponse.json(
+            { success: true, user: userData },
+            { status: 200 },
+          );
+        }
+      }
+    } catch (error) {
+      return NextResponse.json({ success: false }, { status: 401 });
+    }
+
     return NextResponse.json({ success: false }, { status: 401 });
   } catch (error) {
     return NextResponse.json({ success: false }, { status: 500 });
