@@ -40,6 +40,7 @@ export default function SignUpPage() {
           <input
             id="email"
             type="email"
+            name="email"
             className={css.input}
             required
             value={email}
@@ -51,6 +52,7 @@ export default function SignUpPage() {
           <input
             id="password"
             type="password"
+            name="password"
             className={css.input}
             required
             value={password}
