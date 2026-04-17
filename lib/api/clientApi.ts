@@ -1,4 +1,4 @@
-import { internalApi } from "./api";
+import api from "@/app/api/api";
 import { Note } from "../../types/note";
 import { User } from "../../types/user";
 
@@ -11,7 +11,7 @@ export const fetchNotes = async (
 ): Promise<{ notes: Note[]; totalPages: number }> => {
   const params: Record<string, string | number> = { page, perPage, search };
   if (tag && tag !== "all") params.tag = tag;
-  const { data } = await internalApi.get<{ notes: Note[]; totalPages: number }>(
+  const { data } = await api.get<{ notes: Note[]; totalPages: number }>(
     "/notes",
     { params },
   );
@@ -19,19 +19,19 @@ export const fetchNotes = async (
 };
 
 export const fetchNoteById = async (id: string): Promise<Note> => {
-  const { data } = await internalApi.get<Note>(`/notes/${id}`);
+  const { data } = await api.get<Note>(`/notes/${id}`);
   return data;
 };
 
 export const createNote = async (
   note: Omit<Note, "id" | "createdAt" | "updatedAt">,
 ): Promise<Note> => {
-  const { data } = await internalApi.post<Note>("/notes", note);
+  const { data } = await api.post<Note>("/notes", note);
   return data;
 };
 
 export const deleteNote = async (id: string): Promise<Note> => {
-  const { data } = await internalApi.delete<Note>(`/notes/${id}`);
+  const { data } = await api.delete<Note>(`/notes/${id}`);
   return data;
 };
 
@@ -41,7 +41,7 @@ export const register = async (
   email: string,
   password: string,
 ): Promise<User> => {
-  const { data } = await internalApi.post<User>("/auth/register", {
+  const { data } = await api.post<User>("/auth/register", {
     name,
     email,
     password,
@@ -50,7 +50,7 @@ export const register = async (
 };
 
 export const login = async (email: string, password: string): Promise<User> => {
-  const { data } = await internalApi.post<User>("/auth/login", {
+  const { data } = await api.post<User>("/auth/login", {
     email,
     password,
   });
@@ -58,12 +58,12 @@ export const login = async (email: string, password: string): Promise<User> => {
 };
 
 export const logout = async (): Promise<void> => {
-  await internalApi.post("/auth/logout");
+  await api.post("/auth/logout");
 };
 
 export const checkSession = async (): Promise<User | null> => {
   try {
-    const { data } = await internalApi.get<User>("/auth/session");
+    const { data } = await api.get<User>("/auth/session");
     return data;
   } catch (error) {
     return null;
@@ -71,11 +71,11 @@ export const checkSession = async (): Promise<User | null> => {
 };
 
 export const getMe = async (): Promise<User> => {
-  const { data } = await internalApi.get<User>("/users/me");
+  const { data } = await api.get<User>("/users/me");
   return data;
 };
 
 export const updateMe = async (userData: Partial<User>): Promise<User> => {
-  const { data } = await internalApi.patch<User>("/users/me", userData);
+  const { data } = await api.patch<User>("/users/me", userData);
   return data;
 };
