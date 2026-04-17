@@ -1,4 +1,4 @@
-import { internalApi, externalApi } from "./api";
+import { internalApi } from "./api";
 import { Note } from "../../types/note";
 import { User } from "../../types/user";
 
@@ -41,7 +41,7 @@ export const register = async (
   email: string,
   password: string,
 ): Promise<User> => {
-  const { data } = await externalApi.post<User>("/api/auth/register", {
+  const { data } = await internalApi.post<User>("/auth/register", {
     name,
     email,
     password,
@@ -50,7 +50,7 @@ export const register = async (
 };
 
 export const login = async (email: string, password: string): Promise<User> => {
-  const { data } = await externalApi.post<User>("/api/auth/login", {
+  const { data } = await internalApi.post<User>("/auth/login", {
     email,
     password,
   });
@@ -58,12 +58,12 @@ export const login = async (email: string, password: string): Promise<User> => {
 };
 
 export const logout = async (): Promise<void> => {
-  await api.post("/api/auth/logout");
+  await internalApi.post("/auth/logout");
 };
 
 export const checkSession = async (): Promise<User | null> => {
   try {
-    const { data } = await externalApi.get<User>("/api/auth/session");
+    const { data } = await internalApi.get<User>("/auth/session");
     return data;
   } catch (error) {
     return null;
@@ -71,11 +71,11 @@ export const checkSession = async (): Promise<User | null> => {
 };
 
 export const getMe = async (): Promise<User> => {
-  const { data } = await externalApi.get<User>("/users/me");
+  const { data } = await internalApi.get<User>("/users/me");
   return data;
 };
 
 export const updateMe = async (userData: Partial<User>): Promise<User> => {
-  const { data } = await api.patch<User>("/users/me", userData);
+  const { data } = await internalApi.patch<User>("/users/me", userData);
   return data;
 };
