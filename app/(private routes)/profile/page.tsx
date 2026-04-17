@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import css from "./ProfilePage.module.css";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -13,7 +14,7 @@ export default async function ProfilePage() {
   const user = await getMe();
 
   if (!user) {
-    return <div>Loading...</div>;
+    redirect("/sign-in");
   }
 
   return (

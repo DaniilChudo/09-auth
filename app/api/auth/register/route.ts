@@ -4,14 +4,10 @@ import { cookies } from "next/headers";
 import { parse } from "cookie";
 import { isAxiosError } from "axios";
 
-const logError = (data: any) => {
-  console.error("API Error Details:", JSON.stringify(data, null, 2));
-};
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const apiRes = await api.post("users/signup", body);
+    const apiRes = await api.post("auth/register", body);
 
     const cookieStore = await cookies();
     const setCookie = apiRes.headers["set-cookie"];
@@ -23,11 +19,8 @@ export async function POST(req: NextRequest) {
         const parsed = parse(cookieStr);
         const options = {
           expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
-          path: parsed.Path || "/",
+          path: parsed.Path,
           maxAge: parsed["Max-Age"] ? Number(parsed["Max-Age"]) : undefined,
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax" as const,
         };
 
         if (parsed.accessToken)
@@ -40,17 +33,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(apiRes.data, { status: apiRes.status });
   } catch (error) {
     if (isAxiosError(error)) {
-      logError(error.response?.data);
+      console.error(error.response?.data);
       return NextResponse.json(
-        {
-          error: error.message,
-          details: error.response?.data || "Registration failed",
-        },
+        { error: error.message, response: error.response?.data },
         { status: error.response?.status || 500 },
       );
     }
 
-    logError({ message: (error as Error).message });
+    console.error(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
