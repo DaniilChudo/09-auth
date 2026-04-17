@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { api } from "../../api";
 import { isAxiosError } from "axios";
 import { parse } from "cookie";
+import { logErrorResponse } from "../../_utils/utils";
 
 export async function GET() {
   try {
@@ -10,13 +11,17 @@ export async function GET() {
     const accessToken = cookieStore.get("accessToken")?.value;
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
-    if (!accessToken && !refreshToken) {
-      return NextResponse.json({ success: false }, { status: 401 });
+    if (accessToken) {
+      return NextResponse.json({ success: true }, { status: 200 });
+    }
+
+    if (!refreshToken) {
+      return NextResponse.json({ success: false }, { status: 200 });
     }
 
     const res = await api.get("auth/session", {
       headers: {
-        Cookie: `accessToken=${accessToken}; refreshToken=${refreshToken}`,
+        Cookie: cookieStore.toString(),
       },
     });
 
@@ -40,7 +45,8 @@ export async function GET() {
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     if (isAxiosError(error)) {
-      return NextResponse.json({ success: false }, { status: 401 });
+      logErrorResponse(error.response?.data);
+      return NextResponse.json({ success: false }, { status: 200 });
     }
     return NextResponse.json({ success: false }, { status: 500 });
   }
