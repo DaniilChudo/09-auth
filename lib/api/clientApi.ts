@@ -40,22 +40,25 @@ export const register = async (
   email: string,
   password: string,
 ): Promise<User> => {
-  const { data } = await api.post<User>("/auth/register", { email, password });
+  const { data } = await api.post<User>("/api/auth/register", {
+    email,
+    password,
+  });
   return data;
 };
 
 export const login = async (email: string, password: string): Promise<User> => {
-  const { data } = await api.post<User>("/auth/login", { email, password });
+  const { data } = await api.post<User>("/api/auth/login", { email, password });
   return data;
 };
 
 export const logout = async (): Promise<void> => {
-  await api.post("/auth/logout");
+  await api.post("/api/auth/logout");
 };
 
 export const checkSession = async (): Promise<User | null> => {
   try {
-    const { data } = await api.get<User>("/auth/session");
+    const { data } = await api.get<User>("/api/auth/session");
     return data;
   } catch (error) {
     return null;
