@@ -11,14 +11,17 @@ export async function GET() {
     const accessToken = cookieStore.get("accessToken")?.value;
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
+    // Mentor's Fix: Early exit only if BOTH are missing
+    if (!accessToken && !refreshToken) {
+      return NextResponse.json({ success: false }, { status: 200 });
+    }
+
+    // Mentor's Requirement: Direct success if accessToken exists
     if (accessToken) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    if (!refreshToken) {
-      return NextResponse.json({ success: false }, { status: 200 });
-    }
-
+    // If only refreshToken exists, call external API to refresh session
     const res = await api.get("auth/session", {
       headers: {
         Cookie: cookieStore.toString(),
@@ -44,10 +47,8 @@ export async function GET() {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    if (isAxiosError(error)) {
-      logErrorResponse(error.response?.data);
-      return NextResponse.json({ success: false }, { status: 200 });
-    }
-    return NextResponse.json({ success: false }, { status: 500 });
+    logErrorResponse(error);
+    // Mentor's Fix: Always return 200 with success: false for any error
+    return NextResponse.json({ success: false }, { status: 200 });
   }
 }
