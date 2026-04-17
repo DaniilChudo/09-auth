@@ -64,6 +64,13 @@ export default function SignInPage() {
         </div>
 
         {error && <p className={css.error}>{error}</p>}
+
+        <p className={css.signupLink}>
+          Don't have an account?{" "}
+          <a href="/sign-up" className={css.link}>
+            Sign Up
+          </a>
+        </p>
       </form>
     </main>
   );

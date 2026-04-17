@@ -66,3 +66,19 @@
   margin-top: 4px;
   text-align: center;
 }
+
+.signupLink {
+  font-size: 14px;
+  text-align: center;
+  margin-top: 16px;
+  color: #6c757d;
+}
+
+.link {
+  color: #0d6efd;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
